@@ -18,5 +18,5 @@ on Unix:
 
 on Windows:
 
-   gcc -o fsqc.exe fsqc.c -lopengl32 -lglut32
+    gcc -o fsqc.exe fsqc.c -lopengl32 -lglut32
 
