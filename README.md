@@ -9,11 +9,14 @@ Usage example:
 # Compilation
 
 on Mac OS X:
+
     gcc -o fsqc fsqc.c -framework Carbon -framework OpenGL -framework GLUT
 
 on Unix:
+
     gcc -o fsqc fsqc.c -lGL -lGLU -lglut
 
 on Windows:
+
    gcc -o fsqc.exe fsqc.c -lopengl32 -lglut32
 
