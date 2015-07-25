@@ -251,11 +251,11 @@ void centre(void)
 	for(i=0;i<np;i++)
 		p[i]=(float3D){z*(p[i].x-c.x),z*(p[i].y-c.y),z*(p[i].z-c.z)};
 }
-void drawSurface(int width, int height, float *rot)
+void drawSurface(int width, int height, float *rot, int toonFlag)
 {
     int		i;
     float	zoom=1/kZoom;
-	float3D	x,c,zero={0,0,0};
+	float3D	x,a,b,c,zero={0,0,0};
 	float	aspectRatio=width/(float)height;
     
     // init projection
@@ -274,71 +274,19 @@ void drawSurface(int width, int height, float *rot)
         glRotatef(rot[2],0,0,1);
 
     // draw
-    	//
         glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3,GL_FLOAT,0,(GLfloat*)p);
         glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(3,GL_FLOAT,0,(GLfloat*)an);
         glDrawElements(GL_TRIANGLES,nt*3,GL_UNSIGNED_INT,(GLuint*)t);
-        //
 
-		//int		j,mx=3;
-		//float3D	nn;
-		float3D	a,b;
-		//float	d,rmat[9];
-		
-		/*
-		rmat[0]=m[0]; rmat[1]=m[1]; rmat[2]=m[2];
-		rmat[3]=m[4]; rmat[4]=m[5]; rmat[5]=m[6];
-		rmat[6]=m[8]; rmat[7]=m[9]; rmat[8]=m[10];
-		nn=matfloat3D(rmat,(float3D){0,0,-1});
-		[self init_vertsnormals:vertsproj];
-		*/
-		
-		// toon shading
+	// toon shading
+		if(toonFlag)
 		{
 			glEnable( GL_CULL_FACE );
 			glPolygonMode( GL_BACK, GL_FILL );
 			glCullFace( GL_FRONT );
-		}
-	
-		/*
-		glEnable(GL_TEXTURE_1D);
-		glBindTexture( GL_TEXTURE_1D, shaderTexture);
-		glBegin(GL_TRIANGLES);
-		for(i=0;i<nt;i++)
-		{
-			a=p[t[i].a];
-			b=p[t[i].b];
-			c=p[t[i].c];
-			
-			j=t[i].a;
-			d=dot3D(vertsnormals[j],nn);
-			if(d<0) d=0;
-			glTexCoord1f(d);
-			glColor3fv(&vertscolour[j]);
-			glVertex3fv((float*)&a);
-			
-			j=t[i].b;
-			d=dot3D(vertsnormals[j],nn);
-			if(d<0) d=0;
-			glTexCoord1f(d);
-			glColor3fv(&vertscolour[j]);
-			glVertex3fv((float*)&b);
-			
-			j=t[i].c;
-			d=dot3D(vertsnormals[j],nn);
-			if(d<0) d=0;
-			glTexCoord1f(d);
-			glColor3fv(&vertscolour[j]);
-			glVertex3fv((float*)&c);
-		}
-		glEnd();
-		glDisable( GL_TEXTURE_1D );
-		*/
 
-		// toon shading
-		{
 			glPolygonMode(GL_FRONT, GL_LINE);
 			glLineWidth(3.0);
 			glCullFace(GL_BACK);
@@ -488,6 +436,7 @@ int main(int argc, char *argv[])
 	float	rot[3]={90,0,-90};
 	int		i,n;
 	int		noann=0;
+	int		toonFlag=0;
 		
 	// Default background color: black
 	back=(float3D){0xff,0xff,0xff};
@@ -507,6 +456,8 @@ int main(int argc, char *argv[])
 		if(strcmp(argv[i],"-back")==0){ sscanf(argv[++i],"%f,%f,%f",&back.x,&back.y,&back.z);}
 		else
 		if(strcmp(argv[i],"-noann")==0){noann=1;}
+		else
+		if(strcmp(argv[i],"-toon")==0){toonFlag=1;}
 	}
 	if(n<4)
 	{
@@ -553,7 +504,7 @@ int main(int argc, char *argv[])
 	}
 	
 	// OpenGL draw
-	drawSurface(width,height,rot);
+	drawSurface(width,height,rot,toonFlag);
 	//	glTranslatef(30, 30, 0); glutBitmapCharacter(GLUT_BITMAP_8_BY_13,65);
 
 	// Write image in TIFF format
