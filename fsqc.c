@@ -517,6 +517,7 @@ int main(int argc, char *argv[])
 	free(p);
 	free(t);
 	free(an);
+	free(addr);
 	
 	return 0;
 }
